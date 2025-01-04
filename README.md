@@ -1,1 +1,9 @@
-# CODTECH-Advance-task-4
+**Name**: AYUSH GUPTA 
+**Company**: CODTECH IT SOLUTIONS 
+**ID**: CTO8EWT 
+**Domain**: Python programming 
+**Duration**: DEC 2024 to JAN 2024 
+**Mentor**: SRAVANI GOUNI
+
+**Overview of the Project** 
+**Project**:CREATE A PREDICTIVE MODEL USING SCIKIT- LEARN TO CLASSIFY OR PREDICT OUTCOMES FROM A DATASET (E.G., SPAM EMAIL DETECTION).
