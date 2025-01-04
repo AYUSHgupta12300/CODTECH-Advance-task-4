@@ -1,0 +1,76 @@
+# Importing necessary libraries
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Load the SMS Spam Collection dataset
+# We can use the following dataset URL:
+# https://archive.ics.uci.edu/ml/machine-learning-databases/00228/smsspamcollection.zip
+
+# Assuming the dataset is unzipped and placed in the working directory
+file_path = 'SMSSpamCollection'  # Update this path if necessary
+df = pd.read_csv(file_path, sep='\t', header=None, names=['label', 'message'])
+
+# Display the first few rows of the dataset
+df.head()
+
+# Data Preprocessing: Convert labels into binary (1 for spam, 0 for ham)
+df['label'] = df['label'].map({'spam': 1, 'ham': 0})
+
+# Check for any missing values
+df.isnull().sum()
+
+# Split the dataset into training and test sets
+X = df['message']  # Features: the messages
+y = df['label']    # Labels: spam (1) or ham (0)
+
+# Split data into training (80%) and testing (20%) sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Text Vectorization: Convert text data into numerical vectors using TF-IDF
+vectorizer = TfidfVectorizer(stop_words='english', max_features=5000)
+X_train_tfidf = vectorizer.fit_transform(X_train)
+X_test_tfidf = vectorizer.transform(X_test)
+
+# Build the model: Using Naive Bayes Classifier for text classification
+model = MultinomialNB()
+model.fit(X_train_tfidf, y_train)
+
+# Step 1: Model Evaluation
+
+# Predict the labels for the test set
+y_pred = model.predict(X_test_tfidf)
+
+# Evaluate the model using accuracy score
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy Score: ", accuracy)
+
+# Classification Report
+print("Classification Report:\n", classification_report(y_test, y_pred))
+
+# Confusion Matrix
+conf_matrix = confusion_matrix(y_test, y_pred)
+print("Confusion Matrix:\n", conf_matrix)
+
+# Visualize the confusion matrix using a heatmap
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=['Ham', 'Spam'], yticklabels=['Ham', 'Spam'])
+plt.title('Confusion Matrix')
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.show()
+
+# Step 2: Making a prediction for a new message
+new_message = ["Congratulations! You've won a $1000 gift card. Click here to claim."]
+new_message_tfidf = vectorizer.transform(new_message)
+prediction = model.predict(new_message_tfidf)
+
+# Displaying prediction result
+if prediction == 1:
+    print("The message is Spam.")
+else:
+    print("The message is Ham.")
